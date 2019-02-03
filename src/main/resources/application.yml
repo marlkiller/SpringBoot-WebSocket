@@ -1,0 +1,15 @@
+#配置日志
+logging:
+  #配置日志文件路径
+  #path: E:\ItSoft\WorkSpace\other\Logs\springboot
+  #path: /usr/local/develop/logs
+  level:
+    cn.voidm: info
+    org.springfromework: error
+  #自定义文件名称
+  #file: /usr/local/develop/logs/myspringboot.log
+  file: E:\ItSoft\WorkSpace\other\Logs\springboot\myspringboot.log
+
+server:
+  servlet:
+    context-path: /web

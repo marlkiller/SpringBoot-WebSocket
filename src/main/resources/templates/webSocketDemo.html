@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>stomp</title>
+</head>
+
+<body>
+Welcome<br /><input id="text" type="text" />
+<button onclick="send()">发送消息</button>
+<button onclick="subscribe2()">订阅消息/topic/sendTest</button>
+<button onclick="subscribe1()">订阅消息/topic/subscribeTest</button>
+<hr />
+<button onclick="closeWebSocket()">关闭WebSocket连接</button>
+<hr />
+<div id="message"></div>
+</body>
+
+<!--<script src="http://cdn.bootcss.com/stomp.js/2.3.3/stomp.min.js"></script>-->
+<!--<script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>-->
+<script th:src="@{/js/sockjs.min.js}"></script>
+<script th:src="@{/js/stomp.min.js}"></script>
+<script type="text/javascript">
+    var stompClient;
+    var baseUrl = "http://localhost:8080/web/";
+
+    // 建立连接对象（还未发起连接）
+    function connect() {
+        var userId = "aaaaaa";
+
+        var socket = new SockJS(baseUrl + "webSocketServer");
+        // 获取 STOMP 子协议的客户端对象
+        stompClient = Stomp.over(socket);
+        // 向服务器发起websocket连接并发送CONNECT帧
+        stompClient.connect(
+            {
+                username: userId,
+                password: 'admin'
+            },
+            function connectCallback(frame) {
+                // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
+                setMessageInnerHTML("连接成功");
+
+
+                setMessageInnerHTML("subscribe > /user/" + userId + "/queue/getResponse");
+                stompClient.subscribe('/user/' + userId + '/queue/getResponse', function (response) {
+                    setMessageInnerHTML("/user/" + userId + "/message getMsg :" + response.body);
+                });
+
+                setMessageInnerHTML("subscribe > /topic/getResponse");
+                stompClient.subscribe('/topic/getResponse', function (response) {
+                    setMessageInnerHTML("/topic/getResponse getMsg :" + response.body);
+                });
+            },
+            function errorCallBack(error) {
+                // 连接失败时（服务器响应 ERROR 帧）的回调方法
+                setMessageInnerHTML("连接失败");
+            }
+        );
+
+    }
+
+    //发送消息
+    function send() {
+        var message = document.getElementById('text').value;
+        var messageJson = JSON.stringify({"name": message});
+        stompClient.send("/sendTopic", {}, messageJson);
+        setMessageInnerHTML("/sendTopic 你发送的消息:" + message);
+
+        stompClient.send("/sendUser", {}, messageJson);
+        setMessageInnerHTML("/sendUser 你发送的消息:" + message);
+    }
+
+
+    //将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        document.getElementById('message').innerHTML += innerHTML + '<br/>';
+    }
+</script>
+
+</html>
