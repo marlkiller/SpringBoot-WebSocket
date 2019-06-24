@@ -41,13 +41,13 @@ public class IndexController{
     @Scheduled(fixedRate = 3000)
     public void sendTopicMessage() {
         long millis = System.currentTimeMillis();
-        this.messageTemplate.convertAndSend("/topic/getResponse",millis);
+        this.messageTemplate.convertAndSend("/topic/getResponse","Server -> Client 一对多"+millis);
     }
 
     //一对一推送消息
     @Scheduled(fixedRate = 3000)
     public void sendQueueMessage() {
         long millis = System.currentTimeMillis();
-        this.messageTemplate.convertAndSendToUser("aaaaaa","/queue/getResponse",millis);
+        this.messageTemplate.convertAndSendToUser("aaaaaa","/queue/getResponse","Server -> Client 一对一" + millis);
     }
 }

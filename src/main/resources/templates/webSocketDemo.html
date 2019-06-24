@@ -6,19 +6,22 @@
 </head>
 
 <body>
-Welcome<br /><input id="text" type="text" value="this is msg"/>
+Welcome<br/><input id="text" type="text" value="this is msg"/>
 <button onclick="send()">发送消息</button>
-<button onclick="subscribe2()">订阅消息/topic/sendTest</button>
-<button onclick="subscribe1()">订阅消息/topic/subscribeTest</button>
-<hr />
+<hr/>
 
-<button onclick="connect()" >打开 WebSocket连接</button>
+<button onclick="connect()">打开 WebSocket连接</button>
 <button onclick="function closeWebSocket() {
     stompClient.disconnect();
 }
 closeWebSocket()">关闭WebSocket连接
 </button>
-<hr />
+<button onclick="function clearMsg() {
+ document.getElementById('message').innerHTML='';
+}
+clearMsg()">Clear
+</button>
+<hr/>
 <div id="message"></div>
 </body>
 
@@ -48,12 +51,15 @@ closeWebSocket()">关闭WebSocket连接
                 // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
                 setMessageInnerHTML("连接成功");
 
-
+                // 订阅 一对一
+                setMessageInnerHTML("订阅一对一" + "subscribe > /user/" + userId + "/queue/getResponse");
                 setMessageInnerHTML("subscribe > /user/" + userId + "/queue/getResponse");
                 stompClient.subscribe('/user/' + userId + '/queue/getResponse', function (response) {
                     setMessageInnerHTML("/user/" + userId + "/message getMsg :" + response.body);
                 });
 
+                // 订阅 一对多
+                setMessageInnerHTML("订阅一对多" + "subscribe > /topic/getResponse");
                 setMessageInnerHTML("subscribe > /topic/getResponse");
                 stompClient.subscribe('/topic/getResponse', function (response) {
                     setMessageInnerHTML("/topic/getResponse getMsg :" + response.body);
@@ -71,9 +77,12 @@ closeWebSocket()">关闭WebSocket连接
     function send() {
         var message = document.getElementById('text').value;
         var messageJson = JSON.stringify({"name": message});
+
+        // 一对一 发送消息
         stompClient.send("/sendTopic", {}, messageJson);
         setMessageInnerHTML("/sendTopic 你发送的消息:" + message);
 
+        // 一对多 发送消息
         stompClient.send("/sendUser", {}, messageJson);
         setMessageInnerHTML("/sendUser 你发送的消息:" + message);
     }
