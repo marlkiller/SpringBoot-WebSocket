@@ -32,7 +32,7 @@ public class StompClient {
         StompHeaders headers = new StompHeaders();
         headers.add("username", "aaaaaa");
         headers.add("password", "admin");
-        ListenableFuture<StompSession> connect = stompClient.connect("ws://localhost:8080/web/webSocketServer", new WebSocketHttpHeaders(), headers, sessionHandler);
+        ListenableFuture<StompSession> connect = stompClient.connect("ws://localhost:8080/web-websocket/webSocketServer", new WebSocketHttpHeaders(), headers, sessionHandler);
         try {
             StompSession stompSession = connect.get();
 

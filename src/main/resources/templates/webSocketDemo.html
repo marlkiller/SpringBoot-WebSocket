@@ -6,12 +6,18 @@
 </head>
 
 <body>
-Welcome<br /><input id="text" type="text" />
+Welcome<br /><input id="text" type="text" value="this is msg"/>
 <button onclick="send()">发送消息</button>
 <button onclick="subscribe2()">订阅消息/topic/sendTest</button>
 <button onclick="subscribe1()">订阅消息/topic/subscribeTest</button>
 <hr />
-<button onclick="closeWebSocket()">关闭WebSocket连接</button>
+
+<button onclick="connect()" >打开 WebSocket连接</button>
+<button onclick="function closeWebSocket() {
+    stompClient.disconnect();
+}
+closeWebSocket()">关闭WebSocket连接
+</button>
 <hr />
 <div id="message"></div>
 </body>
@@ -22,13 +28,14 @@ Welcome<br /><input id="text" type="text" />
 <script th:src="@{/js/stomp.min.js}"></script>
 <script type="text/javascript">
     var stompClient;
-    var baseUrl = "http://localhost:8080/web/";
+    var baseUrl = "http://localhost:8080/web-websocket/";
 
     // 建立连接对象（还未发起连接）
     function connect() {
         var userId = "aaaaaa";
 
         var socket = new SockJS(baseUrl + "webSocketServer");
+
         // 获取 STOMP 子协议的客户端对象
         stompClient = Stomp.over(socket);
         // 向服务器发起websocket连接并发送CONNECT帧
