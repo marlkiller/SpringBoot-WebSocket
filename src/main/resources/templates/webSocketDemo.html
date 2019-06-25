@@ -6,7 +6,10 @@
 </head>
 
 <body>
-Welcome<br/><input id="text" type="text" value="this is msg"/>
+Welcome<br/>
+<input id="user" type="text" /><br/>
+<input id="host" type="text" style="width: 400px;"/><br/>
+<input id="text" type="text" value="this is msg"/>
 <button onclick="send()">发送消息</button>
 <hr/>
 
@@ -35,9 +38,8 @@ clearMsg()">Clear
 
     // 建立连接对象（还未发起连接）
     function connect() {
-        var userId = "aaaaaa";
-
-        var socket = new SockJS(getRootPath() + "webSocketServer");
+        var userId = document.getElementById("user").value;
+        var socket = new SockJS(document.getElementById("host").value);
 
         // 获取 STOMP 子协议的客户端对象
         stompClient = Stomp.over(socket);
@@ -101,6 +103,20 @@ clearMsg()">Clear
         var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
         return (localhostPaht + projectName + "/");
     }
+
+    var chars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    function generateName(n) {
+        var res = "";
+        for(var i = 0; i < n; i++) {
+            var id = Math.ceil(Math.random() * 35);
+            res += chars[id];
+        }
+        return res;
+    }
+
+    document.getElementById("host").value = getRootPath() + "webSocketServer";
+    document.getElementById("user").value ="user_"  + generateName(6);
+
 </script>
 
 </html>

@@ -1,5 +1,6 @@
 package com.voidm.springboot.api.controller;
 
+import com.voidm.springboot.api.constant.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -48,6 +49,8 @@ public class IndexController{
     @Scheduled(fixedRate = 3000)
     public void sendQueueMessage() {
         long millis = System.currentTimeMillis();
-        this.messageTemplate.convertAndSendToUser("aaaaaa","/queue/getResponse","Server -> Client 一对一" + millis);
+        for (String user : Constants.users) {
+            this.messageTemplate.convertAndSendToUser(user,"/queue/getResponse","Server -> Client 一对一" + millis);
+        }
     }
 }

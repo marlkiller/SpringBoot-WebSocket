@@ -7,7 +7,7 @@ logging:
     cn.voidm: info
     org.springfromework: error
   #自定义文件名称
-  file: /Users/voidm/Documents/develop/workSpace/develop/myspringboot.log
+  file: ./log/websocket.log
   #file: E:\ItSoft\WorkSpace\other\Logs\springboot\myspringboot.log
 
 server:

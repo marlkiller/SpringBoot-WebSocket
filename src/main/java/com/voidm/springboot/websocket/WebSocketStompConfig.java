@@ -1,5 +1,6 @@
 package com.voidm.springboot.websocket;
 
+import com.voidm.springboot.api.constant.Constants;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -78,14 +79,10 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
                     String username = accessor.getNativeHeader("username").get(0);
                     String password = accessor.getNativeHeader("password").get(0);
 
-                    if ("aaaaaa".equals(username) && "admin".equals(password)) {
-                        Principal principal = new Principal() {
-                            @Override
-                            public String getName() {
-                                return username;
-                            }
-                        };
+                    if ("admin".equals(password)) {
+                        Principal principal = () -> username;
                         accessor.setUser(principal);
+                        Constants.users.add(username);
                         return message;
                     } else {
                         return null;
