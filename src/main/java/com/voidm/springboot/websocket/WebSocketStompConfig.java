@@ -50,8 +50,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
         };
         // WebSocket 协议
         registry.addEndpoint("/webSocketServer").addInterceptors(interceptor).setAllowedOrigins("*").withSockJS();
-        // Socket 协议
-        registry.addEndpoint("/socketServer").addInterceptors(interceptor).setAllowedOrigins("*");
+        // registry.addEndpoint("/socketServer").addInterceptors(interceptor).setAllowedOrigins("*");
         // registry.addEndpoint("/socketServer").setAllowedOrigins("*");
     }
 
