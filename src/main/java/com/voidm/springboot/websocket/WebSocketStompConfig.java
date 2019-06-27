@@ -35,11 +35,9 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 
-        // WebSocket 协议
-        registry.addEndpoint("/webSocketServer").addInterceptors(new HttpSessionHandshakeInterceptor() {
+        HttpSessionHandshakeInterceptor interceptor = new HttpSessionHandshakeInterceptor() {
             @Override
             public boolean beforeHandshake(ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse, WebSocketHandler webSocketHandler, Map<String, Object> map) throws Exception {
-                // 绑定ip地址信息
                 String ipAddress = getIpAddress(serverHttpRequest);
                 map.put("ipAddress", ipAddress);
                 return super.beforeHandshake(serverHttpRequest, serverHttpResponse, webSocketHandler, map);
@@ -49,9 +47,12 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
             public void afterHandshake(ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse, WebSocketHandler webSocketHandler, Exception e) {
 
             }
-        }).setAllowedOrigins("*").withSockJS();
+        };
+        // WebSocket 协议
+        registry.addEndpoint("/webSocketServer").addInterceptors(interceptor).setAllowedOrigins("*").withSockJS();
         // Socket 协议
-        registry.addEndpoint("/socketServer").setAllowedOrigins("*");
+        registry.addEndpoint("/socketServer").addInterceptors(interceptor).setAllowedOrigins("*");
+        // registry.addEndpoint("/socketServer").setAllowedOrigins("*");
     }
 
     /**

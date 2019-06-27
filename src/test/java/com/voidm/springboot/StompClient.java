@@ -30,13 +30,28 @@ public class StompClient {
 
         StompSessionHandler sessionHandler = new MyStompSessionHandler();
         StompHeaders headers = new StompHeaders();
-        headers.add("username", "aaaaaa");
+        String userId = "user_" + System.currentTimeMillis();
+        headers.add("username", userId);
         headers.add("password", "admin");
-        ListenableFuture<StompSession> connect = stompClient.connect("ws://localhost:8080/web-websocket/webSocketServer", new WebSocketHttpHeaders(), headers, sessionHandler);
+        ListenableFuture<StompSession> connect = stompClient.connect("wss://8080-bbaa5560-54f1-47bb-93ac-fcda1db17a03.ws-ap0.gitpod.io/web-websocket/webSocketServer", new WebSocketHttpHeaders(), headers, sessionHandler);
+        // ListenableFuture<StompSession> connect = stompClient.connect("ws://localhost:8080/web-websocket/webSocketServer", new WebSocketHttpHeaders(), headers, sessionHandler);
         try {
             StompSession stompSession = connect.get();
 
             // 订阅
+            stompSession.subscribe("/user/" + userId + "/queue/getResponse", new StompFrameHandler() {
+                @Override
+                public Type getPayloadType(StompHeaders stompHeaders) {
+                    return Object.class;
+                }
+
+                @Override
+                public void handleFrame(StompHeaders stompHeaders, Object o) {
+                    String msg = new String((byte[]) o);
+                    System.out.println("msg = " + msg);
+                }
+            });
+
             stompSession.subscribe("/topic/getResponse", new StompFrameHandler() {
                 @Override
                 public Type getPayloadType(StompHeaders stompHeaders) {
@@ -50,18 +65,7 @@ public class StompClient {
                 }
             });
 
-            stompSession.subscribe("/user/" + "aaaaaa"+ "/queue/getResponse", new StompFrameHandler() {
-                @Override
-                public Type getPayloadType(StompHeaders stompHeaders) {
-                    return Object.class;
-                }
 
-                @Override
-                public void handleFrame(StompHeaders stompHeaders, Object o) {
-                    String msg = new String((byte[]) o);
-                    System.out.println("msg = " + msg);
-                }
-            });
 
             // send 发送
             JSONObject jsonObject = new JSONObject();
