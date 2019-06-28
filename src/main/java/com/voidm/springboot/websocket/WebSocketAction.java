@@ -15,6 +15,8 @@ import java.security.Principal;
 
 /**
  * 处理WebSocket订阅,消息发送
+ *
+ * @author voidm
  */
 @Controller
 public class WebSocketAction {
@@ -48,12 +50,6 @@ public class WebSocketAction {
      */
     @SubscribeMapping("user/{userId}/queue/getResponse")
     public ServerMessage subOnUser(@DestinationVariable String userId, StompHeaderAccessor stompHeaderAccessor,Principal principal) {
-        stompHeaderAccessor.setUser(new Principal() {
-            @Override
-            public String getName() {
-                return userId;
-            }
-        });
         logger.info(userId + "/queue/getResponse 已订阅");
         return new ServerMessage("感谢你订阅了 一对一服务");
     }

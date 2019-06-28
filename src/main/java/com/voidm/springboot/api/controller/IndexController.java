@@ -14,11 +14,9 @@ import java.util.Date;
 
 @Controller
 @RequestMapping("/")
-public class IndexController{
+public class IndexController {
     @Autowired
     private SimpMessagingTemplate messageTemplate;
-
-
 
     @RequestMapping("interface")
     @ResponseBody
@@ -28,12 +26,10 @@ public class IndexController{
 
     @RequestMapping("{page}")
     public String restFul(@PathVariable String page) {
-        System.out.println(123);
-
         return page;
     }
 
-    @RequestMapping({"","/","page"})
+    @RequestMapping({"", "/", "page"})
     public String hello() {
         return "index";
     }
@@ -42,7 +38,7 @@ public class IndexController{
     @Scheduled(fixedRate = 3000)
     public void sendTopicMessage() {
         long millis = System.currentTimeMillis();
-        this.messageTemplate.convertAndSend("/topic/getResponse","Server -> Client 一对多"+millis);
+        this.messageTemplate.convertAndSend("/topic/getResponse", "Server -> Client 一对多" + millis);
     }
 
     //一对一推送消息
@@ -50,7 +46,7 @@ public class IndexController{
     public void sendQueueMessage() {
         long millis = System.currentTimeMillis();
         for (String user : Constants.users) {
-            this.messageTemplate.convertAndSendToUser(user,"/queue/getResponse","Server -> Client 一对一" + millis);
+            this.messageTemplate.convertAndSendToUser(user, "/queue/getResponse", "Server -> Client 一对一" + millis);
         }
     }
 }
