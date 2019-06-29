@@ -8,13 +8,23 @@ package com.voidm.springboot.websocket;
  * @date 2018-10-16
  */
 public class ClientMessage {
-    private String name;
+    private String toUser;
+    private String text;
 
-    public String getName() {
-        return name;
+
+    public String getText() {
+        return text;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getToUser() {
+        return toUser;
+    }
+
+    public void setToUser(String toUser) {
+        this.toUser = toUser;
     }
 }
