@@ -1,4 +1,4 @@
-package com.voidm.springboot.websocket;
+package com.voidm.springboot.websocket.interceptor;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 握手拦截 操作 attr
  * @author voidm
  * @date 2019-06-28
  */

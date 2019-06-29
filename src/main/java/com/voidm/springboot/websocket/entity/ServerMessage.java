@@ -1,4 +1,4 @@
-package com.voidm.springboot.websocket;
+package com.voidm.springboot.websocket.entity;
 
 
 import com.voidm.springboot.api.constant.Constants;

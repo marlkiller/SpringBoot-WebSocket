@@ -2,20 +2,27 @@ package com.voidm.springboot.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.voidm.springboot.api.constant.Constants;
-import com.voidm.springboot.websocket.WebSocketEventType;
+import com.voidm.springboot.websocket.entity.WebSocketEventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 
 
+/**
+ * WebSocket 调试接口
+ *
+ * @author voidm
+ */
 @Controller
 @RequestMapping("/")
-public class IndexController {
+public class WebSocketController {
     @Autowired
     private SimpMessagingTemplate messageTemplate;
 
@@ -25,9 +32,14 @@ public class IndexController {
         return new Date().toString();
     }
 
-    @RequestMapping("{page}")
-    public String restFul(@PathVariable String page) {
-        return page;
+    /**
+     * 跳转调试页面
+     */
+    @RequestMapping("webSocketDemo")
+    public String restFul(HttpSession session, Model model) {
+        session.setAttribute("sessionId", session.getId());
+        model.addAttribute("sessionId", session.getId());
+        return "webSocketDemo.html";
     }
 
     @RequestMapping({"", "/", "page"})
@@ -36,7 +48,7 @@ public class IndexController {
     }
 
     //一对多推送消息
-    // @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 30000)
     public void sendTopicMessage() {
         long millis = System.currentTimeMillis();
         JSONObject jsonObject = new JSONObject();
@@ -46,7 +58,7 @@ public class IndexController {
     }
 
     //一对一推送消息
-    // @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 30000)
     public void sendQueueMessage() {
         long millis = System.currentTimeMillis();
         JSONObject jsonObject = new JSONObject();

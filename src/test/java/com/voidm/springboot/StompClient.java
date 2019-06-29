@@ -43,8 +43,9 @@ public class StompClient {
         headers.add("password", "admin");
 
 
+        // http://127.0.0.1:8080/web-websocket/webSocketServer
         // connect = stompClient.connect("wss://8080-bbaa5560-54f1-47bb-93ac-fcda1db17a03.ws-ap0.gitpod.io/web-websocket/webSocketServer", new WebSocketHttpHeaders(), headers, sessionHandler);
-        connect = stompClient.connect("wss://8080-bbaa5560-54f1-47bb-93ac-fcda1db17a03.ws-ap0.gitpod.io/web-websocket/socketServer", new WebSocketHttpHeaders(), headers, sessionHandler);
+        connect = stompClient.connect("ws://127.0.0.1:8080/web-websocket/socketServer", new WebSocketHttpHeaders(), headers, sessionHandler);
         latch.await();
     }
 
@@ -92,9 +93,9 @@ public class StompClient {
             }
             // send 发送
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name", "this is msg " + " > one");
+            jsonObject.put("text", "this is msg " + " > one");
             stompSession.send("/sendTopic", jsonObject.toJSONString().getBytes());
-            jsonObject.put("name", "this is msg " + " > more");
+            jsonObject.put("text", "this is msg " + " > more");
             stompSession.send("/sendUser", jsonObject.toJSONString().getBytes());
         }
 

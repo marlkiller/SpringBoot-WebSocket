@@ -1,4 +1,4 @@
-package com.voidm.springboot.websocket;
+package com.voidm.springboot.websocket.entity;
 
 
 /**

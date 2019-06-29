@@ -1,6 +1,7 @@
-package com.voidm.springboot.websocket;
+package com.voidm.springboot.websocket.interceptor;
 
 import com.voidm.springboot.api.constant.Constants;
+import com.voidm.springboot.websocket.entity.WebSocketUserAuthentication;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageType;
@@ -11,7 +12,6 @@ import org.springframework.messaging.support.GenericMessage;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,13 +28,14 @@ public class MyChannelInterceptorAdapter extends ChannelInterceptorAdapter {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         //1、判断是否首次连接
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-            //2、判断用户名和密码
+
+            // 2、判断用户名和密码
+            WebSocketUserAuthentication webSocketUserAuthentication = (WebSocketUserAuthentication) accessor.getUser();
             String username = accessor.getNativeHeader("username").get(0);
             String password = accessor.getNativeHeader("password").get(0);
 
-            if ("admin".equals(password)) {
-                Principal principal = () -> username;
-                accessor.setUser(principal);
+            if (webSocketUserAuthentication != null && "admin".equals(password) && webSocketUserAuthentication.getSessionId() != null) {
+                webSocketUserAuthentication.setName(username);
                 Constants.users.add(username);
                 return message;
             } else {
@@ -74,5 +75,42 @@ public class MyChannelInterceptorAdapter extends ChannelInterceptorAdapter {
             default:
                 break;
         }
+    }
+
+    /**
+     * 1. 在消息发送完成后调用，而不管消息发送是否产生异常，在次方法中，我们可以做一些资源释放清理的工作
+     * 2. 此方法的触发必须是 preSend 方法执行成功，且返回值不为null,发生了实际的消息推送，才会触发
+     */
+    @Override
+    public void afterSendCompletion(Message<?> message, MessageChannel messageChannel, boolean b, Exception e) {
+
+    }
+
+    /**
+     * 1. 在消息被实际检索之前调用，如果返回 false ,则不会对检索任何消息，只适用于 (PollableChannels)，
+     * 2. 在 websocket 的场景中用不到
+     */
+    @Override
+    public boolean preReceive(MessageChannel messageChannel) {
+        return true;
+    }
+
+    /**
+     * 1. 在检索到消息之后，返回调用方之前调用，可以进行信息修改，如果返回 null ,就不会进行下一步操作
+     * 2. 适用于 PollableChannels ，轮询场景
+     */
+    @Override
+    public Message<?> postReceive(Message<?> message, MessageChannel messageChannel) {
+        return message;
+    }
+
+    /**
+     * 1. 在消息接收完成之后调用，不管发生什么异常，可以用于消息发送后的资源清理
+     * 2. 只有当 preReceive 执行成功，并返回 true 才会调用此方法
+     * 2. 适用于 PollableChannels ，轮询场景
+     */
+    @Override
+    public void afterReceiveCompletion(Message<?> message, MessageChannel messageChannel, Exception e) {
+
     }
 }

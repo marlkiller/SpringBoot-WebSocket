@@ -1,6 +1,9 @@
-package com.voidm.springboot.websocket;
+package com.voidm.springboot.websocket.action;
 
 import com.alibaba.fastjson.JSONObject;
+import com.voidm.springboot.websocket.entity.ClientMessage;
+import com.voidm.springboot.websocket.entity.ServerMessage;
+import com.voidm.springboot.websocket.entity.WebSocketEventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,7 @@ import java.security.Principal;
 
 
 /**
- * 处理WebSocket订阅,消息发送
+ * 处理 WebSocket 订阅,消息发送
  *
  * @author voidm
  */
@@ -44,7 +47,7 @@ public class WebSocketAction {
      */
     @MessageMapping("/sendUser")
     @SendToUser("/queue/getResponse")
-    public ServerMessage sendUser(ClientMessage message, StompHeaderAccessor stompHeaderAccesso,Principal principal) {
+    public ServerMessage sendUser(ClientMessage message, StompHeaderAccessor stompHeaderAccesso, Principal principal) {
 
         if (message.getToUser() != null) {
             JSONObject jsonObject = new JSONObject();
@@ -70,9 +73,14 @@ public class WebSocketAction {
      * 一对多订阅通知
      */
     @SubscribeMapping("/topic/getResponse")
-    public ServerMessage subOnTopic(Principal principal) {
-        logger.info("/topic/getResponse 已订阅");
+    public ServerMessage subOnTopic(StompHeaderAccessor stompHeaderAccessor) throws Exception {
+        // StompHeaderAccessor.getUser()
 
+        Principal principal = stompHeaderAccessor.getUser();
+        if (principal == null) {
+            throw new Exception("来源异常,账户信息无效 !!");
+        }
+        logger.info("/topic/getResponse 已订阅");
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type",WebSocketEventType.NEW_USER);
         jsonObject.put("userId",principal.getName());
