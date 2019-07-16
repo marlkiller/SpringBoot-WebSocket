@@ -36,6 +36,8 @@ ToUser : <br>
 <hr/>
 
 <button onclick="function closeWebSocket() {
+    clearMsg();
+    setMessageInnerHTML('关闭成功');
         stompClient.disconnect();
     }
     closeWebSocket()">关闭WebSocket连接
@@ -52,8 +54,8 @@ clearMsg()">Clear
 
 <!--<script src="http://cdn.bootcss.com/stomp.js/2.3.3/stomp.min.js"></script>-->
 <!--<script src="https://cdn.bootcss.com/sockjs-client/1.1.4/sockjs.min.js"></script>-->
- <script th:src="@{/js/sockjs.min.js}"></script>
- <script th:src="@{/js/stomp.min.js}"></script>
+<script th:src="@{/js/sockjs.min.js}"></script>
+<script th:src="@{/js/stomp.min.js}"></script>
 <script type="text/javascript">
 
     var stompClient;
@@ -125,7 +127,7 @@ clearMsg()">Clear
         }
     }
 
-    function send2User (){
+    function send2User() {
         var message = document.getElementById('user_text').value;
         var userId = document.getElementById('users').value;
 
@@ -134,7 +136,7 @@ clearMsg()">Clear
             "toUser": userId
         }
         stompClient.send("/sendUser", {}, JSON.stringify(msg));
-        setMessageInnerHTML("/sendTopic 你发送给 "+ userId +"的消息:" + JSON.stringify(msg));
+        setMessageInnerHTML("/sendTopic 你发送给 " + userId + "的消息:" + JSON.stringify(msg));
     }
 
     //将消息显示在网页上
@@ -167,7 +169,7 @@ clearMsg()">Clear
     document.getElementById("host").value = getRootPath() + "webSocketServer";
     document.getElementById("user").value = "user_" + generateName(6);
 
-    function msgHandler ( msg ){
+    function msgHandler(msg) {
         var msgJson = JSON.parse(msg);
         switch (msgJson.type) {
             case "NOTICE":
@@ -177,7 +179,7 @@ clearMsg()">Clear
                 document.getElementById("users").innerHTML = "";
                 for (var i = 0; i < msgJson.users.length; i++) {
                     var user = msgJson.users[i]
-                    if(userId != user){
+                    if (userId != user) {
                         var users = document.getElementById("users");
                         var option = document.createElement("option");
                         option.innerHTML = user;
@@ -186,7 +188,7 @@ clearMsg()">Clear
                 }
                 break;
             case "NEW_USER":
-                if(userId != msgJson.userId){
+                if (userId != msgJson.userId) {
                     var users = document.getElementById("users");
                     var option = document.createElement("option");
                     option.innerHTML = msgJson.userId;

@@ -12,6 +12,7 @@ import org.springframework.messaging.support.GenericMessage;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,28 +28,36 @@ public class MyChannelInterceptorAdapter extends ChannelInterceptorAdapter {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         //1、判断是否首次连接
-        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+        switch (accessor.getCommand()) {
+            case CONNECT:
+                // 2、判断用户名和密码
+                WebSocketUserAuthentication webSocketUserAuthentication = (WebSocketUserAuthentication) accessor.getUser();
+                String username = accessor.getNativeHeader("username").get(0);
+                String password = accessor.getNativeHeader("password").get(0);
 
-            // 2、判断用户名和密码
-            WebSocketUserAuthentication webSocketUserAuthentication = (WebSocketUserAuthentication) accessor.getUser();
-            String username = accessor.getNativeHeader("username").get(0);
-            String password = accessor.getNativeHeader("password").get(0);
-
-            if (webSocketUserAuthentication != null && "admin".equals(password) && webSocketUserAuthentication.getSessionId() != null) {
-                webSocketUserAuthentication.setName(username);
-                Constants.users.add(username);
-                return message;
-            } else {
-                HashMap<String, Object> map = new HashMap<>();
-                for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
-                    map.put(entry.getKey(), entry.getValue());
+                if (webSocketUserAuthentication != null && "admin".equals(password) && webSocketUserAuthentication.getSessionId() != null) {
+                    webSocketUserAuthentication.setName(username);
+                    Constants.users.add(username);
+                } else {
+                    HashMap<String, Object> map = new HashMap<>();
+                    for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
+                        map.put(entry.getKey(), entry.getValue());
+                    }
+                    map.put("simpMessageType", SimpMessageType.OTHER);
+                    map.put("stompCommand", StompCommand.ERROR);
+                    GenericMessage<Object> msg = new GenericMessage<>(Object.class, map);
+                    return msg;
                 }
-                map.put("simpMessageType", SimpMessageType.OTHER);
-                map.put("stompCommand", StompCommand.ERROR);
-                GenericMessage<Object> msg = new GenericMessage<>(Object.class, map);
-                return msg;
-            }
+                break;
+            case DISCONNECT:
+                // 下线
+                Principal user = accessor.getUser();
+                Constants.users.remove(user.getName());
+                break;
+            default:
+                break;
         }
+
         //不是首次连接，已经登陆成功
         return message;
     }
@@ -56,6 +65,7 @@ public class MyChannelInterceptorAdapter extends ChannelInterceptorAdapter {
     @Override
     public void postSend(Message<?> message, MessageChannel messageChannel, boolean b) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+
         // 这里只是单纯的打印，可以根据项目的实际情况做业务处理
         // 忽略心跳消息等非STOMP消息
         if (accessor.getCommand() == null) {

@@ -70,6 +70,7 @@
     </dependencies>
 
     <build>
+        <finalName>web-websocket</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

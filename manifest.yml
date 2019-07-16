@@ -1,0 +1,7 @@
+---
+applications:
+ - name: voidm-java
+   random-route: true
+   path: target/web-websocket.war
+   memory: 256M
+   instances: 1

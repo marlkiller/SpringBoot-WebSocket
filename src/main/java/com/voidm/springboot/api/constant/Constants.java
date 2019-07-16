@@ -4,8 +4,8 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpRequest;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 全局常量
@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class Constants {
 
-    public static Set<String> users = new HashSet<>();
+    public static Set<String> users = ConcurrentHashMap.newKeySet();
 
     private HttpSession getSession(ServerHttpRequest request) {
         if (request instanceof ServletServerHttpRequest) {
