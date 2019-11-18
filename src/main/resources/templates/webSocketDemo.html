@@ -14,8 +14,8 @@ Host : <input id="host" type="text" style="width: 400px;"/>
 
 <button onclick="connect()">打开 WebSocket连接</button>
 <br/>
-<button onclick="one2one()">订阅一对一</button>
-<button onclick="one2more()">订阅一对多</button>
+<!--<button onclick="one2one()">订阅一对一</button>-->
+<!--<button onclick="one2more()">订阅一对多</button>-->
 <hr/>
 <input type="checkbox" id="one2one">一对一频</input>
 <input type="checkbox" id="one2more">一对多频</input>
@@ -43,10 +43,7 @@ ToUser : <br>
     closeWebSocket()">关闭WebSocket连接
 </button>
 <br/>
-<button onclick="function clearMsg() {
-   document.getElementById('message').innerHTML='';
-}
-clearMsg()">Clear
+<button onclick="clearMsg()">Clear
 </button>
 <hr/>
 <div id="message"></div>
@@ -80,6 +77,9 @@ clearMsg()">Clear
             function connectCallback(frame) {
                 // 连接成功时（服务器响应 CONNECTED 帧）的回调方法
                 setMessageInnerHTML("连接成功");
+                one2one();
+                one2more();
+
             },
             function errorCallBack(error) {
                 // 连接失败时（服务器响应 ERROR 帧）的回调方法
@@ -200,6 +200,10 @@ clearMsg()">Clear
                 setMessageInnerHTML("PRIVATE_MSG : " + msgJson.text);
                 break;
         }
+    }
+
+    function clearMsg() {
+        document.getElementById('message').innerHTML = '';
     }
 </script>
 </html>
