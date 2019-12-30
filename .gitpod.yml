@@ -1,5 +1,5 @@
 tasks:
-  - init: mvn package -DskipTests=false
+  - init: mvn package -DskipTests=true
 #    command: java -jar target/*.jar
-image:
+#image:
 #  file: .gitpod.Dockerfile
