@@ -2,4 +2,4 @@ tasks:
   - init: mvn package -DskipTests=false
 #    command: java -jar target/*.jar
 image:
-  file: .gitpod.Dockerfile
+#  file: .gitpod.Dockerfile
