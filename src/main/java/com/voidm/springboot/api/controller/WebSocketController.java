@@ -41,7 +41,7 @@ public class WebSocketController {
         for (int i = 0; i < s.length; i++) {
             after.append(Integer.toHexString((0x000000FF & s[i]) | 0xFFFFFF00).substring(6));
         }
-        System.out.println("dev2");
+        System.out.println("dev");
 
         return before + ":" + after;
     }
